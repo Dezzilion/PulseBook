@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  frontend:
+    build: ../../frontend
+    ports:
+      - '3000:3000'
+  auth-service:
+    build: ../../backend/auth-service
+    ports:
+      - '4000:4000'
+  event-service:
+    build: ../../backend/event-service
+    ports:
+      - '4001:4001'
+  booking-service:
+    build: ../../backend/booking-service
+    ports:
+      - '4002:4002'
+  payment-service:
+    build: ../../backend/payment-service
+    ports:
+      - '4003:4003'
+  analytics-service:
+    build: ../../backend/analytics-service
+    ports:
+      - '4004:4004'
+  recommendation-service:
+    build: ../../ai/recommendation-service
+    ports:
+      - '5000:5000'
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: pulsebook
+      POSTGRES_PASSWORD: pulsebook
+      POSTGRES_DB: pulsebook
+    ports:
+      - '5432:5432'
+  redis:
+    image: redis:7
+    ports:
+      - '6379:6379'
