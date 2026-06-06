@@ -24,13 +24,29 @@ export default function RegisterForm() {
     setError(null);
 
     try {
+      console.log('Відправка даних на реєстрацію:', formData);
+
       const response = await authService.register(formData);
+      
+      console.log('Реєстрація успішна:', response);
+
       login(response.user, response.accessToken, response.refreshToken);
-      // Redirect to dashboard or home (SPA navigation)
-      router.replace('/');
-    } catch (err) {
-      setError('Помилка реєстрації. Спробуйте ще раз.');
-    } finally {
+      
+      // Краще редиректити на dashboard для PulseBook
+      router.replace('/'); 
+    }  catch (err: any) {
+        console.error('❌ Помилка реєстрації:', err);
+
+        let message = 'Помилка реєстрації. Спробуйте ще раз.';
+
+        if (err.message.includes('Не вдалося підключитися')) {
+          message = err.message; // чітке повідомлення про сервер
+        } else if (err.message) {
+          message = err.message;
+        }
+
+        setError(message);
+      }finally {
       setIsLoading(false);
     }
   };
@@ -44,7 +60,7 @@ export default function RegisterForm() {
 
   return (
     <div className="max-w-md mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">Реєстрація</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Реєстрація в PulseBook</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
@@ -102,9 +118,14 @@ export default function RegisterForm() {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
+
+
         {error && (
-          <div className="text-red-600 text-sm">{error}</div>
+          <div className="text-red-600 text-sm p-3 bg-red-50 border border-red-200 rounded-md">
+            {error}
+          </div>
         )}
+
         <button
           type="submit"
           disabled={isLoading}

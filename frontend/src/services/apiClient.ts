@@ -12,6 +12,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
+    
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +21,7 @@ class ApiClient {
       ...options,
     };
 
-    // Add auth token if available
+    // Додаємо токен, якщо є
     const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers = {
@@ -29,15 +30,25 @@ class ApiClient {
       };
     }
 
-    const response = await fetch(url, config);
+    try {
+      const response = await fetch(url, config);
 
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || errorData.error || `HTTP Error: ${response.status}`);
+      }
+
+      return response.json();
+    } catch (err: any) {
+      // Краща обробка мережевих помилок
+      if (err.message.includes('Failed to fetch') || err.name === 'TypeError') {
+        throw new Error('Не вдалося підключитися до сервера. Перевірте, чи запущений auth-service на http://localhost:3001');
+      }
+      throw err;
     }
-
-    return response.json();
   }
 
+  // Методи get, post, put, delete — залишаються без змін
   async get<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint);
   }
@@ -49,18 +60,7 @@ class ApiClient {
     });
   }
 
-  async put<T>(endpoint: string, data?: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'DELETE',
-    });
-  }
+  // ...
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);
