@@ -1,4 +1,4 @@
-// File: D:\Student works\diplome_2026\PulseBook\frontend\src\app\layout.tsx
+// File: D:\student_works\diplome_2026\PulseBook\frontend\src\app\layout.tsx
 import * as entry from '../../../src/app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

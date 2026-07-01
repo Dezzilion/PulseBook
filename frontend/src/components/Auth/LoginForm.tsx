@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import { authService, LoginRequest } from '@/services/authService';
 
@@ -13,6 +14,7 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   const login = useAuthStore((state) => state.login);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,8 +24,7 @@ export default function LoginForm() {
     try {
       const response = await authService.login(formData);
       login(response.user, response.accessToken, response.refreshToken);
-      // Redirect to dashboard or home
-      window.location.href = '/';
+      router.replace('/dashboard');
     } catch (err) {
       setError('Невірний email або пароль');
     } finally {

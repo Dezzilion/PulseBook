@@ -1,0 +1,17 @@
+2:"$Sreact.fragment"
+3:I[9833,["471","static/chunks/471-c6f263f833906599.js","185","static/chunks/app/layout-38fa78130e76f6d1.js"],"Providers",1]
+4:I[9275,[],""]
+5:I[1343,[],""]
+6:I[6513,[],"ClientPageRoot"]
+7:I[1789,["231","static/chunks/231-db04887019ba40af.js","702","static/chunks/app/dashboard/page-30b95d4b07e5551a.js"],"default",1]
+a:I[3120,[],"OutletBoundary"]
+c:I[3120,[],"MetadataBoundary"]
+e:I[3120,[],"ViewportBoundary"]
+10:I[6130,[],""]
+1:HL["/_next/static/css/32b7a67cc22590a9.css","style"]
+0:{"P":null,"b":"SwbXddohiL7uY2EaW6DTm","p":"","c":["","dashboard"],"i":false,"f":[[["",{"children":["dashboard",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true],["",["$","$2","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/32b7a67cc22590a9.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"uk","children":["$","body",null,{"className":"__className_f367f3","children":["$","$L3",null,{"children":["$","$L4",null,{"parallelRouterKey":"children","segmentPath":["children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":"404"}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],"notFoundStyles":[]}]}]}]}]]}],{"children":["dashboard",["$","$2","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","segmentPath":["children","dashboard","children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","notFoundStyles":"$undefined"}]]}],{"children":["__PAGE__",["$","$2","c",{"children":[["$","$L6",null,{"Component":"$7","searchParams":{},"params":{},"promises":["$@8","$@9"]}],null,["$","$La",null,{"children":"$Lb"}]]}],{},null]},null]},null],["$","$2","h",{"children":[null,["$","$2","JqwDWSKvD-TwatOWAAxpF",{"children":[["$","$Lc",null,{"children":"$Ld"}],["$","$Le",null,{"children":"$Lf"}],null]}]]}]]],"m":"$undefined","G":"$10","s":false,"S":true}
+9:{}
+8:{}
+f:[["$","meta","0",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+d:[["$","meta","0",{"charSet":"utf-8"}],["$","title","1",{"children":"PulseBook"}],["$","meta","2",{"name":"description","content":"Інтелектуальна система бронювання місць на культурні та спортивні заходи"}]]
+b:null

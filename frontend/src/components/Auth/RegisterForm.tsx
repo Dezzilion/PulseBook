@@ -32,8 +32,8 @@ export default function RegisterForm() {
 
       login(response.user, response.accessToken, response.refreshToken);
       
-      // Краще редиректити на dashboard для PulseBook
-      router.replace('/'); 
+      // Перенаправити в головне меню після успішної реєстрації
+      router.replace('/dashboard');
     }  catch (err: any) {
         console.error('❌ Помилка реєстрації:', err);
 

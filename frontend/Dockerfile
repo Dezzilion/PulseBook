@@ -1,17 +1,12 @@
-FROM node:20-alpine
+FROM node:20
 
 WORKDIR /app
 
-# Спочатку копіюємо тільки package файли (для кешування залежностей)
 COPY package*.json ./
+RUN npm install
 
-# Встановлюємо залежності
-RUN npm ci
-
-# Копіюємо весь вихідний код
 COPY . .
 
 EXPOSE 3000
 
-# Для розробки використовуємо dev сервер
 CMD ["npm", "run", "dev"]

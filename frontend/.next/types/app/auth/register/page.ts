@@ -1,4 +1,4 @@
-// File: D:\Student works\diplome_2026\PulseBook\frontend\src\app\auth\register\page.tsx
+// File: D:\student_works\diplome_2026\PulseBook\frontend\src\app\auth\register\page.tsx
 import * as entry from '../../../../../src/app/auth/register/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
