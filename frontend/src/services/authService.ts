@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { apiClient } from './apiClient';
 
 export interface LoginRequest {
@@ -10,6 +11,11 @@ export interface RegisterRequest {
   password: string;
   firstName: string;
   lastName: string;
+
+  phone: string;
+  gender: string;
+  location: string;
+  preferences: string;
 }
 
 export interface AuthResponse {

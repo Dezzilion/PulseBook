@@ -11,6 +11,10 @@ export default function RegisterForm() {
     password: '',
     firstName: '',
     lastName: '',
+    phone: '',
+    gender: '',
+    location: '',
+    preferences: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +92,108 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+            Телефон
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="+380XXXXXXXXX"
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+        <div>
+          <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
+            Стать
+          </label>
+
+          <select
+            id="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                gender: e.target.value,
+              })
+            }
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="">Оберіть стать</option>
+            <option value="male">Чоловіча</option>
+            <option value="female">Жіноча</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+            Місто
+          </label>
+
+          <select
+            id="location"
+            name="location"
+            value={formData.location}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                location: e.target.value,
+              })
+            }
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="">Оберіть місто</option>
+
+            <option value="Київ">Київ</option>
+            <option value="Харків">Харків</option>
+            <option value="Львів">Львів</option>
+            <option value="Дніпро">Дніпро</option>
+            <option value="Одеса">Одеса</option>
+            <option value="Запоріжжя">Запоріжжя</option>
+            <option value="Вінниця">Вінниця</option>
+            <option value="Полтава">Полтава</option>
+            <option value="Чернігів">Чернігів</option>
+            <option value="Суми">Суми</option>
+            <option value="Черкаси">Черкаси</option>
+            <option value="Івано-Франківськ">Івано-Франківськ</option>
+            <option value="Тернопіль">Тернопіль</option>
+            <option value="Ужгород">Ужгород</option>
+            <option value="Хмельницький">Хмельницький</option>
+            <option value="Рівне">Рівне</option>
+            <option value="Житомир">Житомир</option>
+            <option value="Кропивницький">Кропивницький</option>
+            <option value="Миколаїв">Миколаїв</option>
+            <option value="Херсон">Херсон</option>
+          </select>
+        </div>
+        <div>
+          <label
+            htmlFor="preferences"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Вподобання
+          </label>
+          <textarea
+            id="preferences"
+            name="preferences"
+            rows={4}
+            value={formData.preferences}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                preferences: e.target.value,
+              })
+            }
+            placeholder="Наприклад: концерти, футбол, театр, IT-конференції..."
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           />
         </div>
         <div>

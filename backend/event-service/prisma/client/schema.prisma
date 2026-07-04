@@ -1,0 +1,129 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./client"
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  location    String
+  price       Float
+  category    String
+  tags        String[]
+  capacity    Int
+  bookedSeats Int      @default(0)
+  status      String   @default("active")
+
+  organizerId     String?
+  organizer       Organizer?         @relation(fields: [organizerId], references: [id])
+  bookings        Booking[]
+  tickets         Ticket[]
+  recommendations RecommendationAI[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id          String  @id @default(cuid())
+  firstName   String
+  lastName    String?
+  email       String  @unique
+  password    String
+  phone       String?
+  gender      String?
+  location    String?
+  preferences String?
+
+  bookings        Booking[]
+  recommendations RecommendationAI[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id String @id @default(cuid())
+
+  userId  String
+  eventId String
+
+  bookingDate DateTime @default(now())
+  seatsAmount Int
+  totalAmount Float
+  status      String   @default("confirmed")
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  payments Payment[]
+  tickets  Ticket[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Organizer {
+  id               String  @id @default(cuid())
+  name             String
+  organizationName String
+  contactInfo      String?
+
+  events Event[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  bookingId     String
+  amount        Float
+  paymentMethod String
+  transactionId String?  @unique
+  status        String   @default("pending")
+  paymentDate   DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ticket {
+  id String @id @default(cuid())
+
+  bookingId String
+  eventId   String
+
+  seatInfo String?
+  qrCode   String?
+  pdfLink  String?
+  status   String  @default("active")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RecommendationAI {
+  id String @id @default(cuid())
+
+  userId      String
+  eventId     String
+  explanation String?
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}

@@ -27,9 +27,19 @@ function getUserById(id) {
   return db.getUserById(id);
 }
 
-function createUser({ email, password, firstName, lastName }) {
+function createUser({ email, password, firstName, lastName, phone, gender, location, preferences }) {
   const passwordHash = bcrypt.hashSync(password, 10);
-  return db.addUser({ email, passwordHash, firstName, lastName });
+
+  return db.addUser({
+    email,
+    passwordHash,
+    firstName,
+    lastName,
+    phone,
+    gender,
+    location,
+    preferences,
+  });
 }
 
 function setUserRefreshToken(userId, token) {
@@ -46,6 +56,10 @@ function userResponse(user) {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
+    phone: user.phone,
+    gender: user.gender,
+    location: user.location,
+    preferences: user.preferences,
   };
 }
 
