@@ -149,7 +149,7 @@ export default function Dashboard() {
             <div className="mb-10">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-semibold">Рекомендовано для вас</h2>
-                <Link href="/recommendations" className="text-indigo-600 hover:underline text-sm">
+                <Link href="/events" className="text-indigo-600 hover:underline text-sm">
                   Дивитись всі →
                 </Link>
               </div>

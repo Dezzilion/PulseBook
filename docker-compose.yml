@@ -1,36 +1,128 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pulsebook-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pulsebook
+    ports:
+      - "5432:5432"
+    volumes:
+      - pulsebook_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pulsebook"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   auth-service:
     build:
       context: ./backend/auth-service
-      dockerfile: Dockerfile
+    container_name: pulsebook-auth
+    restart: unless-stopped
+    environment:
+      PORT: 4000
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/pulsebook
+      JWT_ACCESS_SECRET: pulsebook_access_secret
+      JWT_REFRESH_SECRET: pulsebook_refresh_secret
     ports:
       - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  event-service:
+    build:
+      context: ./backend/event-service
+    container_name: pulsebook-events
+    restart: unless-stopped
+    environment:
+      PORT: 3002
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/pulsebook
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  booking-service:
+    build:
+      context: ./backend/booking-service
+    container_name: pulsebook-bookings
+    restart: unless-stopped
+    environment:
+      PORT: 3003
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/pulsebook
+    ports:
+      - "3003:3003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      event-service:
+        condition: service_started
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: pulsebook-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
     volumes:
-      - ./backend/auth-service:/app
-      - /app/node_modules
+      - pulsebook_ollama_data:/root/.ollama
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: pulsebook-ollama-init
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    depends_on:
+      - ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        until ollama list >/dev/null 2>&1; do
+          echo "Очікування Ollama..."
+          sleep 3
+        done
+        ollama pull llama3
+
+  recommendation-service:
+    build:
+      context: ./ai/recommendation-service
+    container_name: pulsebook-recommendations
+    restart: unless-stopped
+    environment:
+      EVENT_SERVICE_URL: http://event-service:3002/events
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: llama3
+    ports:
+      - "8000:8000"
+    depends_on:
+      event-service:
+        condition: service_started
+      ollama:
+        condition: service_started
 
   frontend:
-    build: ./frontend
-    working_dir: /app
+    build:
+      context: ./frontend
+    container_name: pulsebook-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_AUTH_API_URL: http://localhost:4000
+      NEXT_PUBLIC_EVENT_API_URL: http://localhost:3002
+      NEXT_PUBLIC_BOOKING_API_URL: http://localhost:3003
+      NEXT_PUBLIC_RECOMMENDATION_API_URL: http://localhost:8000
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: npm run dev
-  
-postgres:
-  image: postgres:16
-  container_name: pulsebook-postgres
-  restart: always
-  environment:
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: postgres
-    POSTGRES_DB: pulsebook
-  ports:
-    - "5432:5432"
-  volumes:
-    - postgres_data:/var/lib/postgresql/data
+    depends_on:
+      - auth-service
+      - event-service
+      - booking-service
+      - recommendation-service
 
 volumes:
-  postgres_data:
+  pulsebook_postgres_data:
+  pulsebook_ollama_data:

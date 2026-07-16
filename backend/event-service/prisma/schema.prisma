@@ -55,6 +55,7 @@ model Booking {
   eventId String
 
   bookingDate DateTime @default(now())
+  seatNumber  String?
   seatsAmount Int
   totalAmount Float
   status      String   @default("confirmed")

@@ -18,6 +18,7 @@ export class BookingService {
   async createBooking(data: {
     userId: string;
     eventId: string;
+    seatNumber?: string;
     seatsAmount: number;
   }) {
     const event = await prisma.event.findUnique({
@@ -34,6 +35,7 @@ export class BookingService {
       data: {
         userId: data.userId,
         eventId: data.eventId,
+        seatNumber: data.seatNumber,
         seatsAmount: data.seatsAmount,
         totalAmount: event.price * data.seatsAmount,
       },

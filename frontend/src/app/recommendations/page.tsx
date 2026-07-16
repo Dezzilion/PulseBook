@@ -21,36 +21,6 @@ interface ChatMessage {
   text: string;
 }
 
-const recommendations: RecommendationEvent[] = [
-  {
-    id: 1,
-    title: 'Концерт Okean Elzy',
-    date: '15 липня 2026',
-    location: 'Палац спорту, Київ',
-    price: 850,
-    image: '/images/events/okean-elzy.jpg',
-    category: 'Концерт',
-  },
-  {
-    id: 2,
-    title: 'Вистава «Кайдашева сім\'я»',
-    date: '18 липня 2026',
-    location: 'Театр ім. І. Франка, Київ',
-    price: 450,
-    image: '/images/events/theater.jpg',
-    category: 'Театр',
-  },
-  {
-    id: 3,
-    title: 'Виставка «Світло і тінь»',
-    date: '20 липня 2026',
-    location: 'Мистецький арсенал, Київ',
-    price: 250,
-    image: '/images/events/exhibition.jpg',
-    category: 'Виставка',
-  },
-];
-
 const initialMessages: ChatMessage[] = [
   {
     id: '1',
@@ -91,8 +61,26 @@ function MessageList({ messages }: { messages: ChatMessage[] }) {
               : 'bg-white text-gray-900 max-w-[85%]'
           }`}
         >
-          <p className="text-sm leading-6">{message.text}</p>
-        </div>
+          {message.author === 'ai' ? (
+  <>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+              🤖 Аналіз ШІ (Llama 3)
+            </span>
+          </div>
+
+          <p className="text-sm leading-6 whitespace-pre-wrap">
+            {message.text}
+          </p>
+
+          <div className="mt-2 text-xs text-slate-500">
+            Згенеровано локально за допомогою Llama 3
+          </div>
+          </>
+          ) : (
+            <p className="text-sm leading-6">{message.text}</p>
+          )}
+      </div>
       ))}
     </div>
   );
@@ -138,6 +126,36 @@ export default function RecommendationsPage() {
   const router = useRouter();
   const { messages, addUserMessage, addAiMessage } = useMessages();
 
+  const [recommendations, setRecommendations] = useState<RecommendationEvent[]>([]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) return;
+
+  fetch(`http://localhost:8000/recommendations/${user.id}`)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error('Не вдалося завантажити рекомендації');
+      }
+      return res.json();
+    })
+    .then((data) => {
+      setRecommendations(
+        data.map((event: any) => ({
+          id: event.id,
+          title: event.title,
+          date: new Date(event.date).toLocaleDateString('uk-UA'),
+          location: event.location,
+          price: event.price,
+          image: '',
+          category: event.category,
+        }))
+      );
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }, [isAuthenticated, user?.id]);
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.replace('/auth/login');
@@ -149,43 +167,49 @@ export default function RecommendationsPage() {
     router.push('/auth/login');
   }, [logout, router]);
 
-  const respondToPrompt = useCallback(
-    (prompt: string) => {
-      addUserMessage(prompt);
+const respondToPrompt = useCallback(
+  async (prompt: string) => {
+    addUserMessage(prompt);
 
-      const lowerPrompt = prompt.toLowerCase();
-      let aiAnswer = 'Ось кілька варіантів, які можуть вам підійти.';
+    try {
+      const res = await fetch('http://localhost:8000/recommendations/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id || 'usr_001',
+          message: prompt,
+        }),
+      });
 
-      if (lowerPrompt.includes('концерт')) {
-        aiAnswer = 'Я підготував кілька концертів для вас: Okean Elzy, The Hardkiss, KAZKA та інші події з живою музикою.';
-      } else if (lowerPrompt.includes('театр')) {
-        aiAnswer = 'Чудовий вибір! Спробуйте виставу "Кайдашева сім’я" або сучасну драму в Театрі Франка.';
-      } else if (lowerPrompt.includes('виставка')) {
-        aiAnswer = 'Рекомендую виставку "Світло і тінь", галерею сучасного мистецтва і спеціальний арт-фестиваль.';
-      } else if (lowerPrompt.includes('сім') || lowerPrompt.includes('сімей')) {
-        aiAnswer = 'Для сімейного вечора підійдуть сімейні вистави, дитячі майстер-класи та інтерактивні екскурсії.';
-      } else {
-        aiAnswer = 'Я знайшов цікаві події для вас: концерти, театри та виставки на найближчі вихідні. Розкажіть більше про ваші вподобання.';
+      if (!res.ok) {
+        throw new Error('AI service error');
       }
 
-      addAiMessage(aiAnswer);
-    },
-    [addAiMessage, addUserMessage],
-  );
+      const data = await res.json();
+      addAiMessage(data.answer);
+    } catch (error) {
+      console.error(error);
+      addAiMessage('Не вдалося отримати відповідь від AI-сервісу. Перевірте, чи запущений Ollama та recommendation-service.');
+    }
+  },
+  [addAiMessage, addUserMessage, user?.id],
+);
 
-  const handleSend = useCallback(
-    (value: string) => {
-      respondToPrompt(value);
-    },
-    [respondToPrompt],
-  );
+const handleSend = useCallback(
+  (value: string) => {
+    respondToPrompt(value);
+  },
+  [respondToPrompt],
+);
 
-  const handleQuickPrompt = useCallback(
-    (value: string) => {
-      respondToPrompt(value);
-    },
-    [respondToPrompt],
-  );
+const handleQuickPrompt = useCallback(
+  (value: string) => {
+    respondToPrompt(value);
+  },
+  [respondToPrompt],
+);
 
   const suggestions = useMemo(
     () => [
@@ -243,7 +267,7 @@ export default function RecommendationsPage() {
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1.7fr_1fr]">
+        <div className="w-full">
           <section className="space-y-6">
             <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -254,7 +278,7 @@ export default function RecommendationsPage() {
                   </p>
                 </div>
                 <span className="rounded-3xl bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700">
-                  AI відповіді миттєво
+                  AI
                 </span>
               </div>
 
@@ -281,43 +305,6 @@ export default function RecommendationsPage() {
               </div>
             </div>
           </section>
-
-          <aside className="space-y-6">
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-gray-900">Ваші інтереси</h3>
-              </div>
-              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {['Концерти', 'Театр', 'Виставки', 'Музика', 'Нічне життя', 'Сімейні заходи'].map((tag) => (
-                  <span key={tag} className="rounded-full bg-indigo-50 px-3 py-2 text-center text-sm font-medium text-indigo-700">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900">Топ події</h3>
-              <div className="mt-5 space-y-4">
-                {recommendations.map((event) => (
-                  <Link
-                    key={event.id}
-                    href={`/events/${event.id}`}
-                    className="block rounded-3xl border border-gray-200 p-4 transition hover:border-indigo-300 hover:bg-indigo-50"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.24em] text-indigo-600">{event.category}</p>
-                        <h4 className="mt-2 text-base font-semibold text-gray-900">{event.title}</h4>
-                        <p className="mt-1 text-sm text-gray-500">{event.date}</p>
-                      </div>
-                      <span className="rounded-full bg-indigo-100 px-3 py-1 text-sm font-semibold text-indigo-700">{event.price} грн</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </aside>
         </div>
       </main>
     </div>

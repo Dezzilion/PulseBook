@@ -17,6 +17,7 @@ export class BookingController {
     return this.bookingService.createBooking({
       userId: body.userId,
       eventId: body.eventId,
+      seatNumber: body.seatNumber,
       seatsAmount: Number(body.seatsAmount || 1),
     });
   }

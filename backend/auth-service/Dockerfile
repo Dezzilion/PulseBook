@@ -1,13 +1,14 @@
-FROM node:20-alpine
+FROM node:22-slim
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package.json ./
-RUN npm install --production
+COPY package*.json ./
+RUN npm ci
 
-COPY . ./
+COPY . .
 
-ENV PORT=4000
+RUN npx prisma generate
+
 EXPOSE 4000
 
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npx prisma db push && npm start"]

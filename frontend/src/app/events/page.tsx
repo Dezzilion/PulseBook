@@ -23,6 +23,9 @@ export default function EventsPage() {
   const { user, logout, isAuthenticated } = useAuthStore();
   const router = useRouter();
 
+  const EVENT_API =
+    process.env.NEXT_PUBLIC_EVENT_API_URL || 'http://localhost:3002';
+
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const [eventsError, setEventsError] = useState<string | null>(null);
@@ -38,7 +41,7 @@ export default function EventsPage() {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    fetch('http://localhost:3002/events')
+    fetch(`${EVENT_API}/events`)
       .then((res) => {
         if (!res.ok) {
           throw new Error('Не вдалося завантажити події');
@@ -87,7 +90,7 @@ export default function EventsPage() {
   }
 
   try {
-    const res = await fetch('http://localhost:3003/bookings', {
+    const res = await fetch(`${EVENT_API}/bookings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -300,18 +303,16 @@ export default function EventsPage() {
                           <span className={isSoldOut ? 'text-red-500' : 'text-slate-500'}>
                             {isSoldOut ? 'Продано' : `${seatsLeft} місць залишилось`}
                           </span>
-                          <button
-                            type="button"
-                            disabled={isSoldOut}
-                            onClick={() => handleBooking(event.id)}
+                          <Link
+                            href={`/events/${event.id}`}
                             className={`rounded-full px-4 py-2 font-medium text-white transition ${
                               isSoldOut
-                                ? 'cursor-not-allowed bg-slate-400'
+                                ? 'pointer-events-none cursor-not-allowed bg-slate-400'
                                 : 'bg-indigo-600 hover:bg-indigo-700'
                             }`}
                           >
                             {isSoldOut ? 'Немає місць' : 'Забронювати'}
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     </article>

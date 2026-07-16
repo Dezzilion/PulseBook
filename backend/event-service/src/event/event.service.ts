@@ -22,4 +22,9 @@ export class EventService {
       },
     });
   }
+  async findOne(id: string) {
+  return prisma.event.findUnique({
+    where: { id },
+  });
+}
 }
