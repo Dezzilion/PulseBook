@@ -1,9 +1,0 @@
-{
-  "/auth/login/page": "app/auth/login/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/events/[id]/page": "app/events/[id]/page.js",
-  "/events/page": "app/events/page.js",
-  "/events/[id]/seats/page": "app/events/[id]/seats/page.js",
-  "/bookings/page": "app/bookings/page.js",
-  "/recommendations/page": "app/recommendations/page.js"
-}

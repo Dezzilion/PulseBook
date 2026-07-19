@@ -1,7 +1,4 @@
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('./db');
-
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'pulsebook-access-secret';
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'pulsebook-refresh-secret';
 const ACCESS_EXPIRY = process.env.JWT_ACCESS_EXPIRY || '15m';
@@ -19,58 +16,9 @@ function verifyRefreshToken(token) {
   return jwt.verify(token, REFRESH_SECRET);
 }
 
-function getUserByEmail(email) {
-  return db.getUserByEmail(email);
-}
-
-function getUserById(id) {
-  return db.getUserById(id);
-}
-
-function createUser({ email, password, firstName, lastName, phone, gender, location, preferences }) {
-  const passwordHash = bcrypt.hashSync(password, 10);
-
-  return db.addUser({
-    email,
-    passwordHash,
-    firstName,
-    lastName,
-    phone,
-    gender,
-    location,
-    preferences,
-  });
-}
-
-function setUserRefreshToken(userId, token) {
-  return db.updateUser(userId, { refreshToken: token });
-}
-
-function clearUserRefreshToken(userId) {
-  return db.updateUser(userId, { refreshToken: null });
-}
-
-function userResponse(user) {
-  return {
-    id: user.id,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    phone: user.phone,
-    gender: user.gender,
-    location: user.location,
-    preferences: user.preferences,
-  };
-}
 
 module.exports = {
   createAccessToken,
   createRefreshToken,
   verifyRefreshToken,
-  getUserByEmail,
-  getUserById,
-  createUser,
-  setUserRefreshToken,
-  clearUserRefreshToken,
-  userResponse,
 };

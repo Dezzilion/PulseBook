@@ -9,3 +9,15 @@ __pycache__/
 .idea/
 .vscode/
 .DS_Store
+
+# Next.js
+**/.next/
+
+# Visual Studio
+.vs/
+
+# Local environment
+.env
+.env.*
+!.env.example
+!**/.env.example
