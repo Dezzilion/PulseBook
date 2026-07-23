@@ -1,5 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://localhost:4000';
 class ApiClient {
   private baseURL: string;
 
@@ -42,7 +42,9 @@ class ApiClient {
     } catch (err: any) {
       // Краща обробка мережевих помилок
       if (err.message.includes('Failed to fetch') || err.name === 'TypeError') {
-        throw new Error('Не вдалося підключитися до сервера. Перевірте, чи запущений auth-service на http://localhost:3001');
+        throw new Error(
+          `Не вдалося підключитися до auth-service за адресою ${API_BASE_URL}`
+        );
       }
       throw err;
     }
